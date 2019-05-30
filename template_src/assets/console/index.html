@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) Omar Raad. All rights reserved.
+
+    Licensed under the MIT License. 
+    See the LICENSE file in the project root for more information.
+ -->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" /> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Cordova Development Console</title>
+
+  <link rel="stylesheet" href="css/material-icons.css">
+  <link rel="stylesheet" href="css/material-components-web.min.css">
+  <link rel="stylesheet" href="css/xterm.css">
+
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      height: 100vh;
+    }
+
+    .mdc-drawer-app-content {
+      flex: auto;
+      overflow: auto;
+      position: relative;
+    }
+
+    .main-content {
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .app-bar {
+      position: absolute;
+    }
+
+    .mdc-top-app-bar {
+      z-index: 7;
+    }
+
+    .wide-drawer {
+      width: 360px;
+    }
+
+    #terminal {
+      height: 100%;
+      background-color: black;
+    }
+
+    button[disabled] {
+      pointer-events: none;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    #address {
+      text-align: center;
+    }
+
+    .layout.horizontal {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .flex {
+      flex: 1 1 0.000000001px;
+    }
+
+    .center {
+      align-self: center;
+    }
+
+    [no-selection] {
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body class="mdc-typography">
+
+  <header class="mdc-top-app-bar mdc-top-app-bar--fixed app-bar">
+    <div class="mdc-top-app-bar__row">
+      <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+        <span class="mdc-top-app-bar__title">Cordova Development Console</span>
+      </section>
+    </div>
+  </header>
+  <aside class="mdc-drawer mdc-top-app-bar--fixed-adjust wide-drawer">
+    <div class="mdc-drawer__content">
+      <div class="mdc-tab-bar" role="tablist">
+        <div class="mdc-tab-scroller">
+          <div class="mdc-tab-scroller__scroll-area">
+            <div class="mdc-tab-scroller__scroll-content">
+              <button id="tunnel-tab" class="mdc-tab" role="tab" aria-selected="false" tabindex="2" disabled>
+                <span class="mdc-tab__content">
+                  <span class="mdc-tab__text-label">Tunnel</span>
+                </span>
+                <span class="mdc-tab-indicator">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+                <span class="mdc-tab__ripple"></span>
+              </button>
+
+              <button id="network-tab" class="mdc-tab" role="tab" aria-selected="true" tabindex="0" disabled>
+                <span class="mdc-tab__content">
+                  <span class="mdc-tab__text-label">Network</span>
+                </span>
+                <span class="mdc-tab-indicator">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+                <span class="mdc-tab__ripple"></span>
+              </button>
+
+              <button id="local-tab" class="mdc-tab" role="tab" aria-selected="false" tabindex="1" disabled>
+                <span class="mdc-tab__content">
+                  <span class="mdc-tab__text-label">Local</span>
+                </span>
+                <span class="mdc-tab-indicator">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+                <span class="mdc-tab__ripple"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="layout horizontal address" style="margin: 0 8px;" hidden>
+        <h1 id="address" class="mdc-typography--body1 flex"></h1>
+        <div class="mdc-chip center">
+          <div class="mdc-chip__text" no-selection onclick="openLink()">Open</div>
+        </div>
+      </div>
+
+      <canvas id="qrcode" class="address" hidden></canvas>
+
+    </div>
+  </aside>
+
+  <div class="mdc-drawer-app-content mdc-top-app-bar--fixed-adjust">
+    <main class="main-content" id="main-content">
+      <div id="terminal"></div>
+    </main>
+  </div>
+
+  <script src="js/material-components-web.min.js"></script>
+  <script src="js/qrious.min.js"></script>
+  <script>
+    const topAppBar = mdc.topAppBar.MDCTopAppBar.attachTo(document.querySelector('.mdc-top-app-bar'))
+    topAppBar.setScrollTarget(document.getElementById('main-content'))
+
+    const tabBar = new mdc.tabBar.MDCTabBar(document.querySelector('.mdc-tab-bar'))
+
+    let addressData = null
+    let selectedTab = null
+    let currentAddress = null
+
+    const qr = new QRious({
+      element: document.getElementById('qrcode'),
+      level: 'H',
+      padding: 25,
+      size: 342
+    })
+
+    tabBar.listen('MDCTabBar:activated', (event) => {
+
+      selectedTab = event.detail.index
+      switch (selectedTab) {
+        case 0:
+          currentAddress = addressData.tunnel
+          break
+        case 2:
+          currentAddress = addressData.local
+          break
+        case 1:
+        default:
+          currentAddress = addressData.network
+          break
+      }
+
+      document.querySelector(`#address`).innerHTML = currentAddress
+      qr.value = currentAddress
+
+      document.querySelectorAll('[hidden]').forEach(elem => elem.removeAttribute('hidden'))
+    })
+
+    const openLink = () => {
+      open(`${currentAddress}?platform=browser`)
+    }
+
+    const updateAddresses = async () => {
+      const response = await fetch('/address')
+
+      if (response.status >= 200 && response.status < 400) {
+        addressData = await response.json()
+        Object.entries(addressData).forEach(entry => {
+          const tab = document.querySelector(`#${entry[0]}-tab`)
+          tab && (entry[1] ? tab.removeAttribute('disabled') : tab.setAttribute('disabled', true))
+        })
+
+        if (selectedTab == null && addressData.network) {
+          tabBar.activateTab(1)
+        }
+
+      } else {
+        console.error('request error', response.statusText)
+      }
+
+    }
+
+    setInterval(() => updateAddresses(), 10000)
+    updateAddresses()
+  </script>
+
+  <script src="js/xterm.js"></script>
+  <script src="js/addons/fit/fit.js"></script>
+  <script src="js/addons/attach/attach.js"></script>
+
+  <script>
+    Terminal.applyAddon(fit)
+    Terminal.applyAddon(attach)
+    const term = new Terminal()
+    const socket = new WebSocket('ws://localhost:3331/term')
+    term.attach(socket)
+    term.open(document.getElementById('terminal'))
+    term.fit()
+
+    const socket1 = new WebSocket('ws://localhost:3331/term')
+    socket1.addEventListener('open', (event) => { console.log(`socket opened: ${event.data}`) })
+    socket1.addEventListener('message', (event) => { console.log(`socket message: ${event.data}`) })
+    socket1.addEventListener('close', (event) => { console.log(`socket close: ${event.data}`) })
+    socket1.addEventListener('error', (event) => { console.log(`socket error: ${event.data}`) })
+
+  </script>
+
+</body>
+
+</html>

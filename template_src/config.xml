@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="cordova.react" version="1.0.0" 
+    xmlns="http://www.w3.org/ns/widgets" 
+    xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>CordovaReact</name>
+    <description>
+        Cordova React Template with support for Webpack HMR
+    </description>
+    <author email="omarraad@gmail.com" href="http://cordova.io">
+        Omar Raad
+    </author>
+    <content src="index.html" />
+    <hook src="assets/hooks/collect-app-info.js" type="after_prepare" />
+    <hook src="assets/hooks/run-dev.js" type="before_build" />
+    <hook src="assets/hooks/run-dev.js" type="before_run" />
+    <hook src="assets/hooks/run-prod.js" type="before_build" />
+    <hook src="assets/hooks/run-prod.js" type="before_run" />
+    <access origin="*" />
+    <allow-navigation href="http://*/*" />
+    <allow-navigation href="https://*/*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+    <plugin name="cordova-plugin-whitelist" spec="1" />
+    <plugin name="cordova-plugin-qrscanner" spec="~3.0.1" />
+    <plugin name="cordova-plugin-ionic-webview" spec="~4.0.1" />
+</widget>

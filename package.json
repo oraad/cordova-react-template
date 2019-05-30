@@ -1,0 +1,12 @@
+{
+  "name": "cordova-react",
+  "version": "0.1.0",
+  "description": "Cordova React Template",
+  "main": "index.js",
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova:template"
+  ],
+  "author": "Omar Raad",
+  "license": "MIT"
+}
