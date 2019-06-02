@@ -4,7 +4,7 @@
     xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>CordovaReact</name>
     <description>
-        Cordova React Template with support for Webpack HMR
+        Cordova React Template
     </description>
     <author email="omarraad@gmail.com" href="http://cordova.io">
         Omar Raad

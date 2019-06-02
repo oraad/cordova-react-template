@@ -1,12 +1,19 @@
 {
   "name": "cordova-react",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Cordova React Template",
   "main": "index.js",
   "keywords": [
     "ecosystem:cordova",
-    "cordova:template"
+    "cordova:template",
+    "cordova",
+    "react"
   ],
   "author": "Omar Raad",
+  "homepage": "https://github.com/oraad/cordova-react-template#readme",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/oraad/cordova-react-template.git"
+  },
   "license": "MIT"
 }

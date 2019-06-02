@@ -213,10 +213,10 @@
 
             const platform = cordova.platformId
 
-            // if (platform === 'browser') {
-            //     document.querySelector('#splash p').innerHTML = `For <em>browser</em> development, use Console.`
-            //     return
-            // }
+            if (platform === 'browser') {
+                document.querySelector('#splash p').innerHTML = `For <em>browser</em> development, use Console.`
+                return
+            }
 
             document.querySelector('#splash').setAttribute('hidden', true)
 

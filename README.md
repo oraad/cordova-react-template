@@ -1,13 +1,14 @@
 # Cordova React Template
 
 A template for leveraging the power of Cordova and React.
+
 Integrating React with Cordova from scratch can be a tedious process and most tutorials do not provide and efficient development process.
 
 This template offers the tools required for an easy and effective development.
 
 ## Features
 
-- Webpack Hot Module Reload
+- Webpack
 - Cordova Plugins in Development mode
 - Ionic Web View for Cordova
 - Developing on multiple platforms at the same time

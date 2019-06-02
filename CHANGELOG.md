@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 
+## 0.2.0 (Jun 1, 2019)
+
+### React
+
+- Set/Get platform in sessionStorage to avoid full page reload issue
+- Add 'Device Status' to App component similar to Cordova hello-world
+
+### Cordova
+
+- Implement Cordova component containing CordovaProvider and useCordova
+  
+### Client App
+
+- Fix browser not showing correct message
+
+### Dependencies
+
+- Add devDependency eslint@5.16.0
+- Add devDependency tslint@5.17.0
+- Add devDependency @types/cordova@0.0.34
+- Add devDependency @types/webpack-env@1.13.9
+- Update devDependency typescript@3.4.5 to 3.5.1
+- Update devDependency @types/node@12.0.3 to 12.0.4
+
 ## 0.1.0 (May 30, 2019)
 
 - Create Cordova project using Cordova@9.0.0
