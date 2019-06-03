@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### React
+
+- Fix App test issue caused by missing `CordovaProvider`
+
 ## 0.2.0 (Jun 1, 2019)
 
 ### React
@@ -11,7 +15,7 @@
 
 ### Cordova
 
-- Implement Cordova component containing CordovaProvider and useCordova
+- Implement Cordova component containing `CordovaProvider` and `useCordova`
   
 ### Client App
 
