@@ -62,7 +62,7 @@ The above example will run the android app using the development mode and will s
 Alternatively to the `devserver` flag, running
 
 ```bash
-npm run start:dev
+npm start
 ```
 
 will also start the development server.
@@ -84,7 +84,7 @@ cordova platform add browser
 then run
 
 ```bash
-npm run start:dev
+npm start
 ```
 
 or
@@ -116,7 +116,7 @@ this will generate the `Development App` and starts the `Development Console`
 
 The `Development App` uses a QR code plugin to scan the QR code form the `Development Console`
 
-This process allows decoupling the cordova native plugin from the web content, meaning as long as  no changes were done to the plugin you no longer need to rebuild the platform, simply run `npm start:dev` and scan the QR code
+This process allows decoupling the cordova native plugin from the web content, meaning as long as  no changes were done to the plugin you no longer need to rebuild the platform, simply run `npm start` and scan the QR code
 
 ## Production
 

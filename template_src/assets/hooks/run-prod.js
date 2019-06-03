@@ -32,7 +32,7 @@ module.exports = (context) => {
     const appBuild = () => {
 
         const { promise, resolve } = promisify()
-        const app = spawn('npm', ['run', 'build'], {
+        const app = spawn('npm', ['run', 'cra:build'], {
             env: { ...process.env },
             shell: true
         })

@@ -12,7 +12,7 @@ let webpack = null
 
 const start =  () => {
 
-    webpack = spawn('npm', ['start'], {
+    webpack = spawn('npm', ['run', 'cra:start'], {
         env: { ...process.env, BROWSER: 'none' },
         shell: true
     })
