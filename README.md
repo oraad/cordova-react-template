@@ -121,3 +121,11 @@ This process allows decoupling the cordova native plugin from the web content, m
 ## Production
 
 To generate a production build, simply run the default cordova commands, e.g. `cordova build android` or `cordova run browser`, the template will take care of running webpack build and handling all the logistics.
+
+## Troubleshooting
+
+### QRcode not generated in Console
+
+`Local` and `Network` addresses are collected from the output of the `webpack` process, if the compilation of the app files the first time `webpack` starts, it will not output the addresses and consequently the `Tunnel` address is not generated.
+
+Solve any issue preventing the compilation from succeding and restart the development server.
