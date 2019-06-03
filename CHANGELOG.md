@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Change scripts commands, cra commands now have `cra` prefix and `start:dev` becoms `start`
+
 ### React
 
 - Fix App test issue caused by missing `CordovaProvider`
