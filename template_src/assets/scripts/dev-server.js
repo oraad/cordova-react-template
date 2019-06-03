@@ -10,6 +10,7 @@ const http = require('http')
 const express = require('express')
 const WebSocket = require('ws')
 const path = require('path')
+const getPort = require('./get-port')
 //opn should be updated to open
 const open = require('opn')
 
@@ -17,7 +18,7 @@ const app = express()
 const server = http.createServer(app)
 const wss = new WebSocket.Server({ server, path: '/term' })
 
-const port = 3331
+const PORT = 3331
 
 const webPath = path.join(__dirname, '..', 'console')
 
@@ -26,14 +27,14 @@ app.use('/css', express.static(path.join(webPath, 'css')))
 app.use('/js', express.static(path.join(webPath, 'js')))
 
 wss.on('connection', (ws, req) => {
-    
+
     ws.isAlive = true
 
     ws.send('Socket connected\r\n')
 
     Object.keys(addressState).forEach(key => {
         if (addressState[key]) {
-            ws.send(`${key.slice(0,1).toUpperCase()}${key.slice(1)}: ${addressState[key]}\r\n`)
+            ws.send(`${key.slice(0, 1).toUpperCase()}${key.slice(1)}: ${addressState[key]}\r\n`)
         }
     })
 
@@ -87,7 +88,9 @@ setInterval(() => {
 }, 10000)
 
 const startServer = () =>
-    new Promise((resolve, reject) => {
+    new Promise(async (resolve, reject) => {
+
+        const port = await getPort('0.0.0.0', PORT)
 
         server.listen(port, (error) => {
             if (error) {

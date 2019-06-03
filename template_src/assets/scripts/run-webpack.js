@@ -7,13 +7,17 @@
  */
 
 const { spawn } = require('child_process')
+const getPort = require('./get-port')
 
+const PORT = 3000
 let webpack = null
 
-const start =  () => {
+const start = async () => {
+
+    const port = await getPort('0.0.0.0', PORT)
 
     webpack = spawn('npm', ['run', 'cra:start'], {
-        env: { ...process.env, BROWSER: 'none' },
+        env: { ...process.env, BROWSER: 'none', PORT: port },
         shell: true
     })
 
@@ -47,7 +51,7 @@ const onError = callback => {
 
 const onClose = callback => {
     webpack.on('close', code => {
-      callback(code)  
+        callback(code)
     })
 }
 const _onError = callback => {

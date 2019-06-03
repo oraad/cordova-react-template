@@ -74,7 +74,8 @@ const start = async (platforms = [], isCordova = false, runServer = true) => {
 }
 
 const startWebpack = async (devserver) => {
-    const webpack = require('./run-webpack')
+    
+    const webpack = await require('./run-webpack')
 
     let local = null, network = null
     const { promise, resolve } = promisify()
