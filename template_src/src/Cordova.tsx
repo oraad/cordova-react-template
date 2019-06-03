@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright (c) Omar Raad. All rights reserved.
+ *
+ * Licensed under the MIT License. 
+ * See the LICENSE file in the project root for more information.
+ */
+
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 
 interface ICordovaContext {

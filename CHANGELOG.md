@@ -29,7 +29,7 @@
 ### Cordova
 
 - Implement Cordova component containing `CordovaProvider` and `useCordova`
-  
+
 ### Client App
 
 - Fix browser not showing correct message
