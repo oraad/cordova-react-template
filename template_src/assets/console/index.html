@@ -196,28 +196,26 @@
       open(`${currentAddress}?platform=browser`)
     }
 
-    const updateAddresses = async () => {
-      const response = await fetch('/address')
+    const wsAddress = new WebSocket(`ws://${location.host}/address`)
+    wsAddress.addEventListener('open', (event) => {
+      // console.log('Connection opened')
+    })
+    wsAddress.addEventListener('message', (event) => {
+      addressData = JSON.parse(event.data)
+      Object.entries(addressData).forEach(entry => {
+        const tab = document.querySelector(`#${entry[0]}-tab`)
+        tab && (entry[1] ? tab.removeAttribute('disabled') : tab.setAttribute('disabled', true))
+      })
 
-      if (response.status >= 200 && response.status < 400) {
-        addressData = await response.json()
-        Object.entries(addressData).forEach(entry => {
-          const tab = document.querySelector(`#${entry[0]}-tab`)
-          tab && (entry[1] ? tab.removeAttribute('disabled') : tab.setAttribute('disabled', true))
-        })
-
-        if (selectedTab == null && addressData.network) {
-          tabBar.activateTab(1)
-        }
-
-      } else {
-        console.error('request error', response.statusText)
+      if (selectedTab == null && addressData.network) {
+        tabBar.activateTab(1)
       }
 
-    }
-
-    setInterval(() => updateAddresses(), 10000)
-    updateAddresses()
+    })
+    wsAddress.addEventListener('close', (event) => {
+      // console.log('Connection closed')
+    })
+    wsAddress.addEventListener('error', (event) => { console.log(`socket error: ${JSON.stringify(event)}`) })
   </script>
 
   <script src="js/xterm.js"></script>
@@ -228,16 +226,10 @@
     Terminal.applyAddon(fit)
     Terminal.applyAddon(attach)
     const term = new Terminal()
-    const socket = new WebSocket(`ws://${location.host}/term`)
-    term.attach(socket)
+    const wsTerm = new WebSocket(`ws://${location.host}/term`)
+    term.attach(wsTerm)
     term.open(document.getElementById('terminal'))
     term.fit()
-
-    const socket1 = new WebSocket(`ws://${location.host}/term`)
-    socket1.addEventListener('open', (event) => { console.log(`socket opened: ${event.data}`) })
-    socket1.addEventListener('message', (event) => { console.log(`socket message: ${event.data}`) })
-    socket1.addEventListener('close', (event) => { console.log(`socket close: ${event.data}`) })
-    socket1.addEventListener('error', (event) => { console.log(`socket error: ${event.data}`) })
 
   </script>
 

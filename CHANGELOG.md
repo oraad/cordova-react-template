@@ -13,11 +13,13 @@
 ### Console
 
 - Replace fixed hostname and port with `location.host` for websocket
+- Replace getting addresses using `Fetch` with `WebSocket`
 
 ### Scripts
 
 - Add dynamic port support for dev-serve and webpack-dev-server
 - Add `get-port` helper module to select next open port
+- Replace getting addresses using `GET REST` with `WebSocket`
 
 ## 0.2.0 (Jun 1, 2019)
 

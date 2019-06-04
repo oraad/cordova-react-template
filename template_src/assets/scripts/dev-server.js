@@ -11,12 +11,14 @@ const express = require('express')
 const WebSocket = require('ws')
 const path = require('path')
 const getPort = require('./get-port')
+const url = require('url')
 //opn should be updated to open
 const open = require('opn')
 
 const app = express()
 const server = http.createServer(app)
-const wss = new WebSocket.Server({ server, path: '/term' })
+const wssTerm = new WebSocket.Server({ noServer: true })
+const wssAddress = new WebSocket.Server({ noServer: true })
 
 const PORT = 3331
 
@@ -26,7 +28,7 @@ app.get('/', (req, res) => res.sendFile(path.join(webPath, 'index.html')))
 app.use('/css', express.static(path.join(webPath, 'css')))
 app.use('/js', express.static(path.join(webPath, 'js')))
 
-wss.on('connection', (ws, req) => {
+wssTerm.on('connection', (ws, req) => {
 
     ws.isAlive = true
 
@@ -46,7 +48,7 @@ wss.on('connection', (ws, req) => {
 
 const broadcastTerminal = (data) => {
     data = data.replace(/\r*\n/, '\r\n')
-    wss.clients.forEach((client) => {
+    wssTerm.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(data)
         }
@@ -59,16 +61,40 @@ let addressState = {
     tunnel: null
 }
 
-app.get('/address', (req, res) => {
-    res.send(addressState)
+// app.get('/address', (req, res) => {
+//     res.send(addressState)
+// })
+
+wssAddress.on('connection', (ws, req) => {
+
+    ws.isAlive = true
+
+    ws.send(JSON.stringify(addressState))
+
+    ws.on('pong', () => {
+        ws.isAlive = true;
+    })
+
 })
 
 const update = (local, network, tunnel) => {
     addressState = { local, network, tunnel }
+    wssAddress.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(addressState))
+        }
+    })
 }
 
 const close = () => {
-    wss.clients.forEach((client) => {
+
+    wssAddress.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.close()
+        }
+    })
+
+    wssTerm.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
             client.close()
         }
@@ -78,14 +104,41 @@ const close = () => {
 }
 
 setInterval(() => {
-    wss.clients.forEach((ws) => {
+
+    wssTerm.clients.forEach((ws) => {
 
         if (!ws.isAlive) return ws.terminate()
 
         ws.isAlive = false;
         ws.ping(null, false, true);
     })
+
+    wssAddress.clients.forEach((ws) => {
+
+        if (!ws.isAlive) return ws.terminate()
+
+        ws.isAlive = false;
+        ws.ping(null, false, true);
+    })
+
 }, 10000)
+
+server.on('upgrade', (request, socket, head) => {
+
+    const pathname = url.parse(request.url).pathname
+
+    if (pathname === '/term') {
+        wssTerm.handleUpgrade(request, socket, head, ws => {
+            wssTerm.emit('connection', ws, request)
+        })
+    } else if (pathname === '/address') {
+        wssAddress.handleUpgrade(request, socket, head, ws => {
+            wssAddress.emit('connection', ws, request)
+        })
+    } else {
+        socket.destroy()
+    }
+})
 
 const startServer = () =>
     new Promise(async (resolve, reject) => {
@@ -98,7 +151,12 @@ const startServer = () =>
                 reject(error)
                 return
             }
-            open(`http://localhost:${port}`).then(() => {
+            open(url.format({
+                protocol: 'http',
+                hostname: 'localhost',
+                port: port,
+                pathname: '/'
+            })).then(() => {
                 resolve()
             })
         })
