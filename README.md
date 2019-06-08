@@ -1,4 +1,4 @@
-# Cordova React Template
+# Cordova React Template [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/oraad/cordova-react-template/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/cordova-react.svg?style=flat)](https://www.npmjs.com/package/cordova-react)
 
 A template for leveraging the power of Cordova and React.
 
