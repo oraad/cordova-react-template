@@ -61,10 +61,6 @@ let addressState = {
     tunnel: null
 }
 
-// app.get('/address', (req, res) => {
-//     res.send(addressState)
-// })
-
 wssAddress.on('connection', (ws, req) => {
 
     ws.isAlive = true
@@ -147,7 +143,6 @@ const startServer = () =>
 
         server.listen(port, (error) => {
             if (error) {
-                console.error(error)
                 reject(error)
                 return
             }

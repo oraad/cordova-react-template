@@ -26,7 +26,8 @@ const start = async () => {
         onError: onError,
         onClose: onClose,
         _onError: _onError,
-        stop: stop
+        stop: stop,
+        PORT: port
     }
 }
 

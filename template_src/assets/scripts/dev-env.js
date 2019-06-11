@@ -10,6 +10,7 @@
 const symlink = require('./symlink')
 const devserver = require('./dev-server')
 const tunnel = require('./tunnel')
+const chalk = require('chalk')
 
 const promisify = () => {
     let promise, resolve, reject
@@ -35,7 +36,7 @@ const start = async (platforms = [], isCordova = false, runServer = true) => {
     try {
         await devserver.start()
     } catch (error) {
-        console.error(`WebSocket failed: ${error}`)
+        console.error(chalk.red(`WebSocket failed: ${JSON.stringify(error)}`))
         throw error
     }
 
@@ -48,7 +49,7 @@ const start = async (platforms = [], isCordova = false, runServer = true) => {
         localIP = w.data.local
         networkIP = w.data.network
     } catch (error) {
-        console.error(`Webpack failed: ${error}`)
+        console.error(chalk.red(error))
         throw error
     }
 
@@ -66,7 +67,6 @@ const start = async (platforms = [], isCordova = false, runServer = true) => {
     } catch (error) {
         console.error(`Tunnel failed: ${error}`)
         devserver.broadcastTerminal(`Tunnel setup failed.\n`)
-        throw error
     } finally {
         console.log(`Local: ${localIP || ''}\nNetwork: ${networkIP || ''}\nTunnel: ${tunnelIP || ''}\n`)
     }
@@ -74,7 +74,7 @@ const start = async (platforms = [], isCordova = false, runServer = true) => {
 }
 
 const startWebpack = async (devserver) => {
-    
+
     const webpack = await require('./run-webpack')
 
     let local = null, network = null
@@ -101,16 +101,18 @@ const startWebpack = async (devserver) => {
 
     webpack.onError((error) => {
         if (devserver) {
-            devserver.broaddcast(`${error}\n`)
+            devserver.broadcastTerminal(chalk.red(`${JSON.stringify(error)}\n`))
         }
     })
 
     webpack.onClose((code) => {
+        devserver.broadcastTerminal(`Webpack exited with code ${code}\n`)
         console.log(`Webpack exited with code ${code}`)
     })
 
     webpack._onError((error) => {
-        console.error(`Webpack error ${error}`)
+        devserver.broadcastTerminal(`Webpack error ${JSON.stringify(error)}\n`)
+        console.error(chalk.red(`Webpack error ${JSON.stringify(error)}`))
         throw error
     })
 
@@ -119,12 +121,20 @@ const startWebpack = async (devserver) => {
 
 const stop = (platforms = [], runServer = true) => {
     if (runServer) {
-        console.log(`Closing Tunnel...`)
-        tunnel.close()
+
+        if (tunnel.isConnected) {
+            devserver.broadcastTerminal(`Closing Tunnel...\n`)
+            console.log(`Closing Tunnel...`)
+            tunnel.close()
+        }
+
         if (webpack_stop) {
+            devserver.broadcastTerminal(`Stopping Webpack Development Server...\n`)
             console.log(`Stopping Webpack Development Server...`)
             webpack_stop()
         }
+
+        devserver.broadcastTerminal(`Stopping Dev Server...\n`)
         console.log(`Stopping Dev Server...`)
         devserver.close()
     }
