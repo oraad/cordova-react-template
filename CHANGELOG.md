@@ -20,6 +20,11 @@
 - Add dynamic port support for dev-serve and webpack-dev-server
 - Add `get-port` helper module to select next open port
 - Replace getting addresses using `GET REST` with `WebSocket`
+- Use `chalk` to enhance logging
+
+### Client App
+
+- Fix storing platform with `null` in SessionStorage
 
 ## 0.2.0 (Jun 1, 2019)
 

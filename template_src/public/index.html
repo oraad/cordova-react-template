@@ -52,7 +52,9 @@
     history.replaceState(null, document.title, href.replace(search, '').replace(hash, ''))
 
     const platform = queryParams.platform || sessionStorage.getItem('platform') || null
-    sessionStorage.setItem('platform', platform)
+    if (platform) {
+      sessionStorage.setItem('platform', platform)
+    }
     const script = document.createElement('script')
     script.type = 'text/javascript'
     script.src = platform ? `cordova/${platform}/cordova.js` : `cordova.js`
